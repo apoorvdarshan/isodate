@@ -400,6 +400,23 @@ def test_hash():
     assert len(durSet) == 2
 
 
+def test_hash_consistent_with_eq():
+    """Equal Durations must hash equally (gh-104).
+
+    ``__eq__`` normalizes years<->months (one year equals twelve months), so
+    ``__hash__`` must apply the same normalization.
+    """
+    for a, b in [
+        (Duration(years=1), Duration(months=12)),
+        (Duration(years=2, months=3), Duration(months=27)),
+        (Duration(5, 5, years=1), Duration(5, 5, months=12)),
+    ]:
+        assert a == b
+        assert hash(a) == hash(b)
+        assert len({a, b}) == 1
+        assert b in {a}
+
+
 def test_neg():
     """Test __neg__ for Duration objects."""
     assert -Duration(0) == Duration(0)
