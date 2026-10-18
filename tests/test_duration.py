@@ -417,6 +417,19 @@ def test_hash_consistent_with_eq():
         assert b in {a}
 
 
+def test_hash_consistent_with_timedelta_eq():
+    """A Duration equal to a timedelta must hash like it (gh-104 review)."""
+    for duration, tdelta in [
+        (Duration(days=1), timedelta(days=1)),
+        (Duration(0), timedelta(0)),
+        (Duration(1, 2, 3), timedelta(1, 2, 3)),
+    ]:
+        assert duration == tdelta
+        assert hash(duration) == hash(tdelta)
+        assert len({duration, tdelta}) == 1
+        assert tdelta in {duration}
+
+
 def test_neg():
     """Test __neg__ for Duration objects."""
     assert -Duration(0) == Duration(0)
